@@ -22,6 +22,7 @@ app.set('port', port);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 io.on('connection', function(socket){
+    console.log('on connect');
     socket.emit('news', {hello: 'world'});
     socket.on('my other event', function(data){
         console.log('on other', data);
