@@ -3,7 +3,9 @@ var init = function(server) {
     var io = require('socket.io')(server);
     var sockets = {};
     io.on('connection', function(socket) {
+        
         socket.on('login', function(data){
+            console.log('login', data);
             var user = data.user;
             if (!user){
                 socket.emit('error', {
@@ -23,6 +25,7 @@ var init = function(server) {
              * }
              */
             socket.on('msg', function(data){
+                console.log('msg', data)
                 socket.emit('onmsg', {status: 1});
                 if (data && data.to && sockets[data.to]) {
                     // TODO, data.to is valid user
