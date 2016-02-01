@@ -3,7 +3,7 @@ var init = function(server) {
     var io = require('socket.io')(server);
     var sockets = {};
     io.on('connection', function(socket) {
-        
+        var curUser;
         socket.on('login', function(data){
             console.log('login', data);
             var user = data.user;
@@ -14,8 +14,10 @@ var init = function(server) {
                 return;
             }
 
+            curUser = user;
             // regist to global
             sockets[user] = socket;
+            sendOnlineUsers();
 
             /**
              * msg should be like
@@ -38,9 +40,19 @@ var init = function(server) {
                 // TODO, offline msg
             });
         });
+
         socket.on('disconnect', function() {
             console.log('disconnect');
+            delete sockets[curUser];
         });
+        
+        var sendOnlineUsers = function(){
+            var users = [];
+            for (var user in sockets) {
+                users.push(user);
+            }
+            socket.emit('online.users', {users: users});
+        };
     });
 };
 

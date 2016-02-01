@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html>
+<head>
+<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet" href="stylesheets/style.css">
+<script src="libs/jquery/dist/jquery.js"></script>
 <script src="libs/socket.io-client/socket.io.js"></script>
-
-<body>
-<form id="login_form_id">
-    <input id="user_id" placeholder="your name">
-    <button id="login_id">Login</button>
-</form>
-<form id="chat_form_id">
-    <input id="to_id" placeholder="to user">
-    <textarea id="all_msg_id"></textarea>
-    <input id="msg_id" placeholder="type your msg">
-    <button id="chat_id">Chat</button>
-</form>
-
+<script src="libs/angular/angular.js"></script>
+</head>
+<body ng-app="main" ng-controller="ChatCtrl as chat">
+<div ng-include="'login.html'"></div>
+<div ng-include="'list.html'"></div>
 <script src="app.js"></script>
 </body>
 

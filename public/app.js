@@ -1,55 +1,42 @@
-(function(){
+(function() {
 
     'use strict';
 
-    var socket = io.connect('http://localhost:8090');
+    var app = angular.module('main', [])
+        .controller('ChatCtrl', function($scope) {
+            var socket = io.connect('http://localhost:8090');
+            var self = this;
+            self.msgs = {};
+            self.login = function(user) {
+                socket.emit('login', {
+                    user: user
+                })
+                socket.on('online.users', function(data){
+                    console.log('online.users', data);
+                    self.onlineUsers = data.users;
+                    $scope.$digest();
+                });
+                // after login, can show online user list and msg panel
+                socket.on('msg', function(data){
+                    self.msgs[data.from] = data.msg;
+                    $scope.$digest();
+                });
+            }
 
-    var login = function(user){
-        socket.emit('login', {
-            user: user
-        })
-        socket.on('msg', onMsg);
-    }
+            self.chat = function(msg){
+                socket.emit('msg', {
+                    to: self.to,
+                    msg: msg
+                })
+            }
 
-    var chat = function(to, msg){
-        socket.emit('msg', {
-            to: to,
-            msg: msg
-        })
-    }
+            self.select = function(usr, e){
+                // after select, we can show chat panel
+                self.to = usr;
+                $('.active').removeClass('active');
+                angular.element(e.target).addClass('active');
+            }
 
-    var onMsg = function(msg){
-        // TODO, what to do if we recv msg from server
-        $('all_msg_id').innerHTML += '<' + msg.from + '>: ' + msg.msg;
-    }
-
-    var $ = function(id){
-        // alias for get element by id
-        return document.getElementById(id)
-    }
-
-    $('login_id').addEventListener('click', function(){
-        var user = $('user_id').value;
-        // TODO, add user check
-        login(user);
-    });
-    
-    $('login_form_id').addEventListener('submit', function(e){
-        var e = e || window.event;
-        e.preventDefault();
-        return false;
-    });
-
-    $('chat_form_id').addEventListener('submit', function(e){
-        var e = e || window.event;
-        e.preventDefault();
-        return false;
-    });
-
-    $('chat_id').addEventListener('click', function(){
-        var msg = $('msg_id').value;
-        var to = $('to_id').value;
-        chat(to, msg);
-    })
+        });
 })();
 
